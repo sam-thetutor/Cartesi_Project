@@ -1,11 +1,11 @@
 import createClient from "openapi-fetch";
 import { components, paths } from "./schema";
-import { bytesToString } from 'viem'
+import { fromHex, toHex } from 'viem'
 
 // Importing and initializing DB
 const { Database } = require("node-sqlite3-wasm");
 
-import { User } from './interfaces';
+import { Product, ProductPayload } from './interfaces';
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 
@@ -17,7 +17,7 @@ type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
 type RequestHandlerResult = components["schemas"]["Finish"]["status"];
 type RollupsRequest = components["schemas"]["RollupRequest"];
-type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
+type InspectRequestHandler = (data: InspectRequestData) => Promise<string>;
 type AdvanceRequestHandler = (
   data: AdvanceRequestData
 ) => Promise<RequestHandlerResult>;
@@ -27,47 +27,49 @@ console.log("HTTP rollup_server url is " + rollupServer);
 
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
+  const payload = data.payload;
   try {
-    const userToAdd = JSON.parse(bytesToString(Uint8Array.from(Buffer.from(data.payload, 'hex'))))
-    console.log(`Adding user ${userToAdd.id}/${userToAdd.name}`);
-    db.run('INSERT INTO products VALUES (?, ?)', [userToAdd.id, userToAdd.name]);
+    const productPayload = JSON.parse(fromHex(payload, 'string')) as ProductPayload;
+    console.log(`Managing user ${productPayload.id}/${productPayload.name} - ${productPayload.action}`);
+    if (!productPayload.action) throw new Error('No action provided');
+    if (productPayload.action === 'add')
+      db.run('INSERT INTO products VALUES (?, ?)', [productPayload.id, productPayload.name]);
+    if (productPayload.action === 'delete')
+      db.run('DELETE FROM products WHERE id = ?', [productPayload.id]);
+
+    const advance_req = await fetch(rollup_server + '/notice', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ payload })
+    });
+    console.log("Received notice status ", await advance_req.text())
+    return "accept";
   } catch (e) {
-    console.log(`Error executing parameters: "${data.payload}"`);
+    console.log(`Error executing parameters: "${payload}"`);
+    return "reject";
   }
-  const advance_req = await fetch(rollup_server + '/notice', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ data })
-  });
-  const json = await advance_req.json();
-  console.log("Received notice status " + advance_req.status + " with body " + JSON.stringify(json));
-  return "accept";
 };
 
 const handleInspect: InspectRequestHandler = async (data) => {
   console.log("Received inspect request data " + JSON.stringify(data));
-
-  // Retrieve and print the data
-  const listOfProducts = await db.get('SELECT id, name FROM products');
-  console.log(listOfProducts);
-  const payload = data["payload"];
   try {
-    const payloadStr = JSON.parse(bytesToString(Uint8Array.from(Buffer.from(payload, 'hex'))))
-    console.log(`Adding report "${payloadStr}"`);
+    const listOfProducts = await db.all(`SELECT * FROM products`);
+    const payload = toHex(JSON.stringify(listOfProducts));
+    const inspect_req = await fetch(rollup_server + '/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ payload })
+    });
+    console.log("Received report status " + inspect_req.status);
+    return "accept";
   } catch (e) {
-    console.log(`Adding report with binary value "${payload}"`);
+    console.log(`Error generating report with binary value "${data.payload}"`);
+    return "reject";
   }
-  const inspect_req = await fetch(rollup_server + '/report', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ payload })
-  });
-  console.log("Received report status " + inspect_req.status);
-  // return "accept";
 };
 
 const main = async () => {
