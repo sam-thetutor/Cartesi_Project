@@ -1,6 +1,6 @@
 # Cartesi Typescript SQLite - Backend
 
-The project is a Bakcned application running Typescript + SQLite to run with the respective frontend project. It is managed using npm as the package manager. The goal of the project is to create a template that streamlines the process of kickstarting new projects. The template incorporates the latest version of React and integrates with Ethers, allowing for seamless interaction with the underlying blockchain. For testing purposes, a pre-deployed demo on the Sepolia Network is available for users to explore before starting their own development.
+The project is a Backend application running Typescript + SQLite to run with the respective frontend project. It is managed using npm as the package manager. The goal of the project is to create a template that streamlines the process of kickstarting new projects. The template incorporates the latest version of React and integrates with Ethers, allowing for seamless interaction with the underlying blockchain. For testing purposes, a pre-deployed demo on the Sepolia Network is available for users to explore before starting their own development.
 
 <!-- [https://blabla](Live Demo) -->
 
