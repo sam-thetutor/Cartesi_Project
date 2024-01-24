@@ -35,3 +35,4 @@ This project is based on the following repositories from Cartesi team:
 - [Sunodo Typescript template project](https://github.com/sunodo/sunodo-templates/tree/main/typescript)
 - [Backend SQLite Image](https://github.com/cartesi/rollups-examples/tree/main/sqlite)
 - [Front-end Echo Example](https://github.com/cartesi/rollups-examples/tree/main/frontend-echo)
+- [Sunodo Deploy Testnets](https://github.com/lynoferraz/sunodo-deploy-wo)
