@@ -24,6 +24,10 @@ sunodo run
 
 This will run an [anvil](https://book.getfoundry.sh/reference/anvil/) node as a local blockchain, the GraphQL service and Inspect Service.
 
+## Deploy to Testnet using Sunodo
+
+
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
