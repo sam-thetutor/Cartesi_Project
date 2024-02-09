@@ -120,8 +120,8 @@ SUNODO_BIN_PATH=$sunodo_path docker compose -f $sunodo_path/node/docker-compose-
 To check the logs generated and monitor it in realtime:
 
 ```sh
-verifier=$(SUNODO_BIN_PATH=$sunodo_path docker compose -f $sunodo_path/node/docker-compose-validator.yaml -f $sunodo_path/node/docker-compose-anvil.yaml -f $sunodo_path/node/docker-compose-proxy.yaml -f $sunodo_path/node/docker-compose-prompt.yaml -f $sunodo_path/node/docker-compose-snapshot-volume.yaml -f $sunodo_path/node/docker-compose-envfile.yaml --project-directory . ps | grep verifier | awk '{print $1}')
-docker container logs $verifier -f
+validator=$(SUNODO_BIN_PATH=$sunodo_path docker compose -f $sunodo_path/node/docker-compose-validator.yaml -f $sunodo_path/node/docker-compose-anvil.yaml -f $sunodo_path/node/docker-compose-proxy.yaml -f $sunodo_path/node/docker-compose-prompt.yaml -f $sunodo_path/node/docker-compose-snapshot-volume.yaml -f $sunodo_path/node/docker-compose-envfile.yaml --project-directory . ps | grep validator | awk '{print $1}')
+docker container logs $validator -f
 ```
 
 ### Stopping Verifier Service
