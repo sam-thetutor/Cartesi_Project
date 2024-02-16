@@ -52,18 +52,10 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
   }
 };
 
-const timeoutPromise = () => {
-  return new Promise((_, reject) => setTimeout(reject, 2000))
-}
-
-const getListOfProducts = async () => {
-  return await db.all(`SELECT * FROM products`);
-}
-
 const handleInspect: InspectRequestHandler = async (data) => {
   console.log("Received inspect request data " + JSON.stringify(data));
   try {
-    const listOfProducts = await Promise.race([getListOfProducts(), timeoutPromise()]);
+    const listOfProducts = await db.all(`SELECT * FROM products`);
     const payload = toHex(JSON.stringify(listOfProducts));
     const inspect_req = await fetch(rollup_server + '/report', {
       method: 'POST',
