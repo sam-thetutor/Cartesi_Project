@@ -9,9 +9,16 @@ import { Product, ProductPayload } from './interfaces';
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 
+console.log('Will start SQLITE Database');
+
 // Instatiate Database
-const db = new Database('database.db');
-db.run('CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT)');
+const db = new Database('/tmp/database.db');
+try {
+  db.run('CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT)');
+} catch (e) {
+  console.log('ERROR initializing databas: ', e)
+}
+console.log('Backend Database initialized');
 
 type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
