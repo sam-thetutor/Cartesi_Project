@@ -79,17 +79,13 @@ const handleInspect: InspectRequestHandler = async (data) => {
   let listOfProducts;
   const splitRoute = route.split("/")
   if (splitRoute[1] === "owner") {
-    listOfProducts = ["owner"]
-    // listOfProducts = await db.run('SELECT FROM products WHERE owner = ?', [splitRoute[2]]);
+     listOfProducts = await db.run('SELECT FROM products WHERE owner = ?', [splitRoute[2]]);
   } else if (splitRoute[1] === "id") {
-    listOfProducts = ["specific id"]
-    // listOfProducts = await db.run('SELECT FROM products WHERE id = ?', [Number(splitRoute[2])]);
+     listOfProducts = await db.run('SELECT FROM products WHERE id = ?', [Number(splitRoute[2])]);
   } else if (splitRoute[1] === "all") {
-    listOfProducts = ["all"]
-    //listOfProducts = await db.all(`SELECT * FROM products`);
+    listOfProducts = await db.all(`SELECT * FROM products`);
   } else if (splitRoute[1] === "purchases") {
-    listOfProducts = ["purchases"]
-    //listOfProducts = await db.all(`SELECT * FROM purchases WHERE owner =?`,[splitRoute[2]]);
+    listOfProducts = await db.all(`SELECT * FROM purchases WHERE owner =?`,[splitRoute[2]]);
   }
 
  
